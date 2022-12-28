@@ -9,8 +9,7 @@ import (
 
 func main() {
 	f, _ := os.ReadFile("./input.txt")
-	resOne := partOneTwo(string(f))
-	fmt.Println(resOne)
+	partOneTwo(string(f))
 }
 
 func countLeadingZeros(n int) int {
@@ -47,7 +46,7 @@ func parseInput(input string) []string {
 	return chars
 }
 
-func partOneTwo(input string) int {
+func partOneTwo(input string) {
 	rowCount := 0
 	shift := parseInput(input)
 	rocks := [][]int{
@@ -65,6 +64,10 @@ func partOneTwo(input string) int {
 	cache := map[string][]int{}
 
 	for i := 0; i < 500000; i++ {
+		if i == 2022 {
+			fmt.Println(rowCount + countRows(space) - 1)
+		}
+
 		if i > 100000 {
 			key := fmt.Sprintf("%d,%d", i%(len(rocks)), shiftcount)
 			data, ok := cache[key]
@@ -76,9 +79,11 @@ func partOneTwo(input string) int {
 				m := (y2 - y1) / (x2 - x1)
 				b := y1 - m*x1
 				x := float64(1000000000000)
-				fmt.Printf("Cache hit, estimated height: %.12f\n", m*x+b)
+				if (int(x)-int(x2))%len(cache) == 0 {
+					fmt.Printf("Estimated height: %.12f\n", m*x+b)
+					break
+				}
 			} else {
-				key := fmt.Sprintf("%d,%d", i%(len(rocks)), shiftcount)
 				cache[key] = []int{i, rowCount + countRows(space) - 1}
 			}
 		}
@@ -135,7 +140,6 @@ func partOneTwo(input string) int {
 		start = startingheight(space)
 	}
 
-	return rowCount + countRows(space) - 1
 }
 
 func countRows(space []int) int {
